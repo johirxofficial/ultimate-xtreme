@@ -1,0 +1,49 @@
+Options -Indexes -MultiViews
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Internal folders and version-control metadata
+    RewriteRule ^(includes|admin/partials)/ - [F,L,NC]
+    RewriteRule ^(?:\.git|\.github)(?:/|$) - [F,L,NC]
+
+    # Legacy source copies are not part of this console and are never served.
+    RewriteRule ^(RE|UNIVERSAL)(/|$) - [F,L,NC]
+
+    # Never rewrite real files/directories
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Channel playlist      /live/{server}/{channel}.m3u8
+    RewriteRule ^live/([A-Za-z0-9_-]+)/([A-Za-z0-9_-]+)\.m3u8?$ index.php?server=$1&id=$2 [QSD,L,NC]
+
+    # Nested playlist       /pl/{server}/{payload}.m3u8
+    RewriteRule ^pl/([A-Za-z0-9_-]+)/([A-Za-z0-9_-]+)\.m3u8?$ index.php?server=$1&pl=$2 [QSD,L,NC]
+
+    # Segment / key relay   /stream/{server}/{payload}.ts
+    RewriteRule ^stream/([A-Za-z0-9_-]+)/([A-Za-z0-9_-]+)\.([A-Za-z0-9]{1,6})$ index.php?server=$1&ts=$2&ext=$3 [QSD,L,NC]
+
+    # Public M3U playlist   /playlist/{server}.m3u
+    RewriteRule ^playlist/([A-Za-z0-9_-]+)\.m3u8?$ playlist.php?server=$1 [QSD,L,NC]
+
+    # Admin pages           /admin, /admin/servers, ...
+    RewriteRule ^admin/?$ admin/index.php [L,NC]
+    RewriteRule ^admin/(login|logout|servers|channels|activity|about|users|settings|account)/?$ admin/$1.php [QSA,L,NC]
+
+    # Friendly aliases
+    RewriteRule ^dashboard/?$ admin/index.php [L,NC]
+    RewriteRule ^login/?$ admin/login.php [L,NC]
+    RewriteRule ^logout/?$ logout.php [L,NC]
+</IfModule>
+
+# Block database and log files from the web
+<FilesMatch "\.sqlite|\.sqlite3|\.db|\.log$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>

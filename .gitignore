@@ -1,0 +1,45 @@
+# ---------------------------------------------------------------------------
+# Runtime data (never commit)
+# ---------------------------------------------------------------------------
+/data/*
+!/data/.htaccess
+!/data/.gitkeep
+
+# SQLite databases and sidecar files, wherever they appear
+*.sqlite
+*.sqlite3
+*.sqlite-*
+*.db
+
+# Channel cache, backups and temporary archives
+/data/cache/
+/data/backups/
+*.bak
+*.zip
+
+# Legacy source copies (not part of the supported console)
+/RE/
+/UNIVERSAL XTREME REWRITE & RESTREAM/
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+config.local.php
+
+# Dependency and build folders (the app has no build step)
+/vendor/
+/node_modules/
+/dist/
+
+# Editor, OS and temporary files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+*.tmp
+*.temp
+*.swp
+*~
